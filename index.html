@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Форма взяття авто EMS - Con Animación Final</title>
+  <title>Облік автомобілів EMS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -136,19 +136,19 @@
 
     <div class="flex items-center gap-4 border-b border-red-600 pb-4">
       <i data-lucide="truck" class="w-8 h-8 text-red-500 animate-pulse"></i>
-      <h1 class="text-3xl font-extrabold tracking-wide">🚑 Форма взяття авто EMS</h1>
+      <h1 class="text-3xl font-extrabold tracking-wide">🚑 Облік автомобілів EMS</h1>
     </div>
 
     <div class="space-y-6">
-      <input id="fullName" type="text" placeholder="Ваше ім'я та прізвище *" required
+      <input id="fullName" type="text" placeholder="Ваше ім'я та прізвище" required
              class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
-      <input id="position" type="text" placeholder="Ваша посада та номер паспорта (статік) *" required
+      <input id="position" type="text" placeholder="Ваша посада та номер паспорта (статік)" required
              class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
-      <input id="purpose" type="text" placeholder="Ціль з якою берете авто? *" required
+      <input id="purpose" type="text" placeholder="Ціль з якою берете авто?" required
              class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
-      <input id="plate" type="text" placeholder="Реєстраційний номер т/с яке взяли *" required
+      <input id="plate" type="text" placeholder="Реєстраційний номер т/с яке взяли" required
              class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
-      <input id="timeRange" type="text" placeholder="Орієнтовний час (з хх:хх до хх:хх) *" required
+      <input id="timeRange" type="text" placeholder="Орієнтовний час (з хх:хх до хх:хх)" required
              class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
     </div>
 
@@ -174,7 +174,7 @@
 
     // Map de matrículas a imágenes
     const ambulanceImages = {
-      "AIW998": "images/aix998.png",
+      "AIW998": "images/aiw998.png",
       "DGJ167": "images/dgj167.png",
       "EGX998": "images/egx998.png",
       "PNY747": "images/pny747.png",
@@ -241,7 +241,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
-      .then(res => res.ok ? showToast("✅ Форма відправлена в Discord!") : showToast("❌ Помилка при відправленні", "error"))
+      .then(res => res.ok ? showToast("✅ Форма відправлена!") : showToast("❌ Помилка при відправленні", "error"))
       .catch(() => showToast("❌ Не вдалося з'єднатися з Discord.", "error"));
     });
   </script>
