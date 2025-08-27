@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Облік автомобілів EMS</title>
+  <title>Форма взяття авто EMS - Con Animación Final</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -129,6 +129,8 @@
 <body class="flex flex-col items-center justify-center min-h-screen p-6">
 
   <div class="emergency-container w-full max-w-2xl text-white space-y-8 fade-in">
+
+    <!-- Luces móviles -->
     <div class="moving-light"></div>
     <div class="moving-light right"></div>
 
@@ -138,20 +140,28 @@
     </div>
 
     <div class="space-y-6">
-      <input id="fullName" type="text" placeholder="Ваше ім'я та прізвище" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
-      <input id="position" type="text" placeholder="Ваша посада та номер паспорта (статік)" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
-      <input id="purpose" type="text" placeholder="Ціль з якою берете авто?" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
-      <input id="plate" type="text" placeholder="Реєстраційний номер т/с яке взяли" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
-      <input id="timeRange" type="text" placeholder="Орієнтовний час (з хх:хх до хх:хх)" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+      <input id="fullName" type="text" placeholder="Ваше ім'я та прізвище *" required
+             class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
+      <input id="position" type="text" placeholder="Ваша посада та номер паспорта (статік) *" required
+             class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
+      <input id="purpose" type="text" placeholder="Ціль з якою берете авто? *" required
+             class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
+      <input id="plate" type="text" placeholder="Реєстраційний номер т/с яке взяли *" required
+             class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
+      <input id="timeRange" type="text" placeholder="Орієнтовний час (з хх:хх до хх:хх) *" required
+             class="w-full px-5 py-4 rounded-2xl bg-gray-800 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-lg transition transform input-anim">
     </div>
 
+    <!-- Contenedor de imagen de ambulancia -->
     <div class="ambulance-image" id="ambulanceImage"></div>
 
     <button id="sendBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 text-gray-900 font-bold text-lg shadow-xl hover:scale-105 transform transition-all animate-pulse">
       📤 Надіслати
     </button>
+
   </div>
 
+  <!-- Footer -->
   <div class="footer">
     EMS Облік автомобілів • Версія 1.0<br>
     © 2025 Design and Created by Sustauskas. Всі права захищені.
@@ -162,16 +172,17 @@
   <script>
     lucide.createIcons();
 
+    // Map de matrículas a imágenes
     const ambulanceImages = {
-      "AIW998": "aix998.png",
-      "DGJ167": "dgj167.png",
-      "EGX998": "egx998.png",
-      "PNY747": "pny747.png",
-      "VVX333": "vvx333.png",
-      "WIE215": "wie215.png",
-      "ZOH508": "zoh508.png",
-      "NFX689": "nfx689.png",
-      "ALX456": "alx456.png",
+      "AIW998": "images/aix998.png",
+      "DGJ167": "images/dgj167.png",
+      "EGX998": "images/egx998.png",
+      "PNY747": "images/pny747.png",
+      "VVX333": "images/vvx333.png",
+      "WIE215": "images/wie215.png",
+      "ZOH508": "images/zoh508.png",
+      "NFX689": "images/nfx689.png",
+      "ALX456": "images/alx456.png"
     };
 
     const plateInput = document.getElementById("plate");
@@ -179,7 +190,11 @@
 
     plateInput.addEventListener("input", () => {
       const plate = plateInput.value.trim().toUpperCase();
-      imageContainer.innerHTML = ambulanceImages[plate] ? `<img src="${ambulanceImages[plate]}" alt="Ambulancia">` : "";
+      if (ambulanceImages[plate]) {
+        imageContainer.innerHTML = `<img src="${ambulanceImages[plate]}" alt="Ambulancia">`;
+      } else {
+        imageContainer.innerHTML = "";
+      }
     });
 
     function showToast(message, type = "success") {
@@ -190,31 +205,44 @@
     }
 
     document.getElementById("sendBtn").addEventListener("click", () => {
+      const fullName = document.getElementById("fullName").value.trim();
+      const position = document.getElementById("position").value.trim();
+      const purpose = document.getElementById("purpose").value.trim();
+      const plate = document.getElementById("plate").value.trim();
+      const timeRange = document.getElementById("timeRange").value.trim();
+
+      if (!fullName || !position || !purpose || !plate || !timeRange) {
+        showToast("⚠️ Будь ласка, заповніть всі поля", "error");
+        return;
+      }
+
+      const webhookURL = "https://discord.com/api/webhooks/1410237689180979251/rsDAiEwkDTNIYTcViB-nvdCwVaMMiRMHhFWQVGUcg-nn1V6oopidyIcWoPo29FJw6Clw";
+
       const payload = {
         embeds: [
           {
             title: "🚑 Форма взяття авто EMS",
             color: 0xff0000,
             fields: [
-              { name: "👤 Ваше ім'я та прізвище", value: document.getElementById("fullName").value.trim() },
-              { name: "🆔 Ваша посада та номер паспорта", value: document.getElementById("position").value.trim() },
-              { name: "🎯 Ціль використання авто", value: document.getElementById("purpose").value.trim() },
-              { name: "🚘 Реєстраційний номер авто", value: document.getElementById("plate").value.trim() },
-              { name: "⏱️ Орієнтовний час", value: document.getElementById("timeRange").value.trim() }
+              { name: "👤 Ваше ім'я та прізвище", value: fullName, inline: false },
+              { name: "🆔 Ваша посада та номер паспорта", value: position, inline: false },
+              { name: "🎯 Ціль використання авто", value: purpose, inline: false },
+              { name: "🚘 Реєстраційний номер авто", value: plate, inline: false },
+              { name: "⏱️ Орієнтовний час", value: timeRange, inline: false }
             ],
-            footer: { text: "EMS Облік автомобілів © GTA UKRAINE" },
+            footer: { text: "EMS Vehicle System © GTA Server" },
             timestamp: new Date().toISOString()
           }
         ]
       };
 
-      fetch("send-report", {
+      fetch(webhookURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
-        .then(res => res.ok ? showToast("✅ Форма відправлена!") : showToast("❌ Помилка при відправленні", "error"))
-        .catch(() => showToast("❌ Не вдалося з'єднатися з сервером.", "error"));
+      .then(res => res.ok ? showToast("✅ Форма відправлена в Discord!") : showToast("❌ Помилка при відправленні", "error"))
+      .catch(() => showToast("❌ Не вдалося з'єднатися з Discord.", "error"));
     });
   </script>
 </body>
