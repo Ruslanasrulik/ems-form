@@ -1,0 +1,13 @@
+{
+  "name": "ems-form",
+  "version": "1.0.0",
+  "description": "Formulario EMS para registro de uso de ambulancias",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
+  "author": "Sustauskas",
+  "license": "MIT",
+  "dependencies": {}
+}

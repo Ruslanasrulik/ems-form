@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Облік автомобілів EMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a, #3b0000);
+      overflow-x: hidden;
+    }
+
+    /* Contenedor principal */
+    .emergency-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 2rem;
+      padding: 2.5rem;
+      background: rgba(20, 20, 20, 0.85);
+      box-shadow: 0 0 30px rgba(255,0,0,0.5), 0 0 30px rgba(255,255,0,0.5);
+      animation: pulseLights 1.5s infinite alternate;
+    }
+
+    /* Luces móviles de emergencia */
+    .moving-light {
+      position: absolute;
+      top: -4px;
+      width: 50%;
+      height: 6px;
+      background: linear-gradient(90deg, red, yellow, red);
+      opacity: 0.8;
+      animation: moveLight 2s infinite alternate;
+    }
+
+    .moving-light.right {
+      top: auto;
+      bottom: -4px;
+      animation-delay: 1s;
+      transform: rotate(180deg);
+    }
+
+    @keyframes pulseLights {
+      0% { box-shadow: 0 0 30px red, 0 0 30px yellow; }
+      50% { box-shadow: 0 0 60px red, 0 0 60px yellow; }
+      100% { box-shadow: 0 0 30px red, 0 0 30px yellow; }
+    }
+
+    @keyframes moveLight {
+      0% { left: -50%; }
+      50% { left: 50%; }
+      100% { left: -50%; }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: linear-gradient(135deg,#22c55e,#16a34a); }
+    .toast.error { background: linear-gradient(135deg,#ef4444,#b91c1c); }
+
+    .input-anim:focus {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ambulancia con parpadeo */
+    .ambulance-image img {
+      width: 100%;
+      max-width: 400px;
+      margin: 1rem auto 0 auto;
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(255,0,0,0.7);
+      animation: fadeInImg 0.8s forwards, blinkLights 1.5s infinite alternate;
+    }
+
+    @keyframes fadeInImg {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes blinkLights {
+      0% { filter: drop-shadow(0 0 20px red) drop-shadow(0 0 20px yellow); }
+      50% { filter: drop-shadow(0 0 50px red) drop-shadow(0 0 50px yellow); }
+      100% { filter: drop-shadow(0 0 20px red) drop-shadow(0 0 20px yellow); }
+    }
+
+    ::placeholder { color: rgba(255,255,255,0.7); }
+
+    /* Footer */
+    .footer {
+      width: 100%;
+      max-width: 2xl;
+      text-align: center;
+      color: #ccc;
+      font-size: 0.875rem;
+      margin-top: 2rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
+
+  <div class="emergency-container w-full max-w-2xl text-white space-y-8 fade-in">
+    <div class="moving-light"></div>
+    <div class="moving-light right"></div>
+
+    <div class="flex items-center gap-4 border-b border-red-600 pb-4">
+      <i data-lucide="truck" class="w-8 h-8 text-red-500 animate-pulse"></i>
+      <h1 class="text-3xl font-extrabold tracking-wide">🚑 Форма взяття авто EMS</h1>
+    </div>
+
+    <div class="space-y-6">
+      <input id="fullName" type="text" placeholder="Ваше ім'я та прізвище" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+      <input id="position" type="text" placeholder="Ваша посада та номер паспорта (статік)" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+      <input id="purpose" type="text" placeholder="Ціль з якою берете авто?" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+      <input id="plate" type="text" placeholder="Реєстраційний номер т/с яке взяли" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+      <input id="timeRange" type="text" placeholder="Орієнтовний час (з хх:хх до хх:хх)" required class="w-full px-5 py-4 rounded-2xl bg-gray-800 text-white input-anim">
+    </div>
+
+    <div class="ambulance-image" id="ambulanceImage"></div>
+
+    <button id="sendBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 text-gray-900 font-bold text-lg shadow-xl hover:scale-105 transform transition-all animate-pulse">
+      📤 Надіслати
+    </button>
+  </div>
+
+  <div class="footer">
+    EMS Облік автомобілів • Версія 1.0<br>
+    © 2025 Design and Created by Sustauskas. Всі права захищені.
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    lucide.createIcons();
+
+    const ambulanceImages = {
+      "AIW998": "aix998.png",
+      "DGJ167": "dgj167.png",
+      "EGX998": "egx998.png",
+      "PNY747": "pny747.png",
+      "VVX333": "vvx333.png",
+      "WIE215": "wie215.png",
+      "ZOH508": "zoh508.png",
+      "NFX689": "nfx689.png",
+      "ALX456": "alx456.png",
+    };
+
+    const plateInput = document.getElementById("plate");
+    const imageContainer = document.getElementById("ambulanceImage");
+
+    plateInput.addEventListener("input", () => {
+      const plate = plateInput.value.trim().toUpperCase();
+      imageContainer.innerHTML = ambulanceImages[plate] ? `<img src="${ambulanceImages[plate]}" alt="Ambulancia">` : "";
+    });
+
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => { toast.classList.remove("show"); }, 3000);
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", () => {
+      const payload = {
+        embeds: [
+          {
+            title: "🚑 Форма взяття авто EMS",
+            color: 0xff0000,
+            fields: [
+              { name: "👤 Ваше ім'я та прізвище", value: document.getElementById("fullName").value.trim() },
+              { name: "🆔 Ваша посада та номер паспорта", value: document.getElementById("position").value.trim() },
+              { name: "🎯 Ціль використання авто", value: document.getElementById("purpose").value.trim() },
+              { name: "🚘 Реєстраційний номер авто", value: document.getElementById("plate").value.trim() },
+              { name: "⏱️ Орієнтовний час", value: document.getElementById("timeRange").value.trim() }
+            ],
+            footer: { text: "EMS Облік автомобілів © GTA UKRAINE" },
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+
+      fetch("send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.ok ? showToast("✅ Форма відправлена!") : showToast("❌ Помилка при відправленні", "error"))
+        .catch(() => showToast("❌ Не вдалося з'єднатися з сервером.", "error"));
+    });
+  </script>
+</body>
+</html>
